@@ -397,6 +397,7 @@ message DeleteStatementResponse {
 
 message ReplaceStatementRequest {
   Statement statement = 1;
+  bool all = 2;
 }
 
 message ReplaceStatementResponse {
