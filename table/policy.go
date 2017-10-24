@@ -3041,12 +3041,10 @@ func (r *RoutingPolicy) validateCondition(v Condition) (err error) {
 
 func (r *RoutingPolicy) inUse(d DefinedSet) bool {
 	name := d.Name()
-	for _, p := range r.policyMap {
-		for _, s := range p.Statements {
-			for _, c := range s.Conditions {
-				if c.Set().Name() == name {
-					return true
-				}
+	for _, s := range r.statementMap {
+		for _, c := range s.Conditions {
+			if c.Set().Name() == name {
+				return true
 			}
 		}
 	}
