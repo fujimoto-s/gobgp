@@ -56,7 +56,7 @@ class GoBGPContainer(BGPContainer):
 
     def __init__(self, name, asn, router_id, ctn_image_name='osrg/gobgp',
                  log_level='debug', zebra=False, config_format='toml',
-                 zapi_version=2, bgp_config=None, ospfd_config=None):
+                 zapi_version=2, no_peer_as=False, bgp_config=None, ospfd_config=None):
         super(GoBGPContainer, self).__init__(name, asn, router_id,
                                              ctn_image_name)
         self.shared_volumes.append((self.config_dir, self.SHARED_VOLUME))
@@ -72,6 +72,7 @@ class GoBGPContainer(BGPContainer):
         self.zebra = zebra
         self.zapi_version = zapi_version
         self.config_format = config_format
+        self.no_peer_as = no_peer_as
 
         # bgp_config is equivalent to config.BgpConfigSet structure
         # Example:
@@ -374,7 +375,6 @@ class GoBGPContainer(BGPContainer):
                 'config': {
                     'neighbor-address': neigh_addr,
                     'neighbor-interface': interface,
-                    'peer-as': info['remote_as'],
                     'auth-password': info['passwd'],
                     'vrf': info['vrf'],
                     'remove-private-as': info['remove_private_as'],
@@ -389,6 +389,9 @@ class GoBGPContainer(BGPContainer):
                     'config': {},
                 },
             }
+
+            if not self.no_peer_as:
+                n['config']['peer-as'] = info['remote_as']
 
             n['as-path-options'] = {'config': {}}
             if info['allow_as_in'] > 0:

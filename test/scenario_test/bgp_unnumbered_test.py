@@ -35,10 +35,12 @@ class GoBGPTestBase(unittest.TestCase):
 
         g1 = GoBGPContainer(name='g1', asn=65000, router_id='192.168.0.1',
                             ctn_image_name=gobgp_ctn_image_name,
-                            log_level=parser_option.gobgp_log_level)
+                            log_level=parser_option.gobgp_log_level,
+                            no_peer_as=True)
         g2 = GoBGPContainer(name='g2', asn=65001, router_id='192.168.0.2',
                             ctn_image_name=gobgp_ctn_image_name,
-                            log_level=parser_option.gobgp_log_level)
+                            log_level=parser_option.gobgp_log_level,
+                            no_peer_as=True)
         ctns = [g1, g2]
 
         initial_wait_time = max(ctn.run() for ctn in ctns)
