@@ -129,6 +129,8 @@ func NewBgpServer() *BgpServer {
 	}
 	s.bmpManager = newBmpClientManager(s)
 	s.mrtManager = newMrtManager(s)
+
+	initPrometheusClient()
 	return s
 }
 
@@ -1859,6 +1861,8 @@ func (server *BgpServer) addNeighbor(c *config.Neighbor) error {
 	}
 	peer.startFSMHandler(server.fsmincomingCh, server.fsmStateCh)
 	server.broadcastPeerState(peer, bgp.BGP_FSM_IDLE)
+
+	setNeighborMetric(len(server.neighborMap))
 	return nil
 }
 
@@ -1939,6 +1943,8 @@ func (server *BgpServer) deleteNeighbor(c *config.Neighbor, code, subcode uint8)
 	go n.stopFSM()
 	delete(server.neighborMap, addr)
 	server.dropPeerAllRoutes(n, n.configuredRFlist())
+
+	setNeighborMetric(len(server.neighborMap))
 	return nil
 }
 
