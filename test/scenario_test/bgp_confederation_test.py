@@ -116,7 +116,7 @@ class GoBGPTestBase(unittest.TestCase):
 
         routes = []
         for i in range(60):
-            routes = self.quaggas['g1'].get_global_rib('10.0.0.0/24')
+            routes = self.gobgp.get_global_rib('10.0.0.0/24')
             if len(routes) > 0:
                 break
             time.sleep(1)
