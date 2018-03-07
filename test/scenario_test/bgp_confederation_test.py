@@ -51,7 +51,7 @@ class GoBGPTestBase(unittest.TestCase):
         #                  | | +-----+ |     | +-----+ | |
         #                  | +---------+     +---------+ |
         #                  +-----------------------------+
-        
+
         gobgp_ctn_image_name = parser_option.gobgp_image
         base.TEST_PREFIX = parser_option.test_prefix
 
@@ -105,6 +105,30 @@ class GoBGPTestBase(unittest.TestCase):
     def test_02_route_advertise(self):
         self.quaggas['q3'].add_route('10.0.0.0/24')
         time.sleep(self.initial_wait_time)
+
+        routes = []
+        for i in range(60):
+            routes = self.quaggas['q2'].get_global_rib('10.0.0.0/24')
+            if len(routes) > 0:
+                break
+            time.sleep(1)
+        self.failIf(len(routes) == 0)
+
+        routes = []
+        for i in range(60):
+            routes = self.quaggas['g1'].get_global_rib('10.0.0.0/24')
+            if len(routes) > 0:
+                break
+            time.sleep(1)
+        self.failIf(len(routes) == 0)
+
+        routes = []
+        for i in range(60):
+            routes = self.quaggas['q11'].get_global_rib('10.0.0.0/24')
+            if len(routes) > 0:
+                break
+            time.sleep(1)
+        self.failIf(len(routes) == 0)
 
         routes = []
         for i in range(60):
