@@ -1093,8 +1093,6 @@ func (r *IPAddrPrefixDefault) serializePrefix(bitLen uint8) ([]byte, error) {
 		lastByte := buf[byteLen-1] & byte(mask)
 		buf[byteLen-1] = lastByte
 	}
-	r.Prefix = make([]byte, len(r.Prefix))
-	copy(r.Prefix, buf)
 	return buf, nil
 }
 
@@ -1173,10 +1171,22 @@ func (r *IPAddrPrefix) SAFI() uint8 {
 }
 
 func NewIPAddrPrefix(length uint8, prefix string) *IPAddrPrefix {
+	p := net.ParseIP(prefix).To4()
+	byteLen := (int(length) + 7) / 8
+	buf := make([]byte, byteLen)
+	copy(buf, p)
+	// clear trailing bits in the last byte. rfc doesn't require
+	// this though.
+	rem := length % 8
+	if rem != 0 {
+		mask := 0xff00 >> rem
+		lastByte := buf[byteLen-1] & byte(mask)
+		buf[byteLen-1] = lastByte
+	}
 	return &IPAddrPrefix{
 		IPAddrPrefixDefault{
 			Length: length,
-			Prefix: net.ParseIP(prefix).To4(),
+			Prefix: net.IP(buf),
 		},
 		4,
 	}
