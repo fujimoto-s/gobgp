@@ -2315,7 +2315,7 @@ func (s *Server) GetPolicyAssignment(ctx context.Context, arg *GetPolicyAssignme
 		Default:  def,
 		Policies: policies,
 	}
-	return &GetPolicyAssignmentResponse{NewAPIPolicyAssignmentFromTableStruct(t)}, err
+	return &GetPolicyAssignmentResponse{Assignment: NewAPIPolicyAssignmentFromTableStruct(t)}, err
 }
 
 func defaultRouteType(d RouteAction) table.RouteType {
